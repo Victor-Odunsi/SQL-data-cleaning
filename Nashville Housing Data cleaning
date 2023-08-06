@@ -1,6 +1,6 @@
 /*
 
-CLEANING DATA USING SQL QUERIES
+CLEANING DIRTY DATA USING SQL QUERIES
 
 */
 
@@ -75,7 +75,7 @@ WHERE PropertyAddress IS NULL
  UPDATE NashvilleHousing
  SET PropertyAddressHouse = LEFT(PropertyAddress, CHARINDEX(',', PropertyAddress)-1)
 
-  UPDATE NashvilleHousing
+ UPDATE NashvilleHousing
  SET PropertyAddressCity = RIGHT(propertyaddress, LEN(PROPERTYADDRESS) - CHARINDEX(',', PropertyAddress))
 
 
@@ -134,21 +134,22 @@ SET SoldAsVacant = CASE WHEN SoldAsVacant = 'Y' THEN 'Yes'
 SELECT *
 FROM NashvilleHousing
 
-WITH NEW_CTE AS (SELECT *, ROW_NUMBER() OVER (PARTITION BY ParcelID,
-										PropertyAddress,
-										saleDate, 
-										saleprice,
-										legalreference
-								ORDER BY ParcelID) AS ROW_NUM
-			 FROM NashvilleHousing)
+WITH NEW_CTE AS (
+		SELECT *, ROW_NUMBER() OVER (PARTITION BY ParcelID,
+							PropertyAddress,
+							saleDate, 
+							saleprice,
+							legalreference
+						ORDER BY ParcelID) AS ROW_NUM
+		FROM NashvilleHousing)
 
 SELECT *
 FROM NEW_CTE
 WHERE ROW_NUM > 1
 
---DELETE
---FROM NEW_CTE
---WHERE ROW_NUM > 1
+DELETE
+FROM NEW_CTE
+WHERE ROW_NUM > 1
 
 ---------------------------------------------------------------------------------------------------------------------------------------------------
 
